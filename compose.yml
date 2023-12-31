@@ -1,0 +1,23 @@
+# Use postgres/example user/password credentials
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=numbers
+  api:
+    restart: always
+    build:
+      context: /www/odd-or-even
+      dockerfile: Dockerfile
+    ports:
+      - "3007:3007"
+    image: odd-or-even/latest
+    depends_on:
+      - db
