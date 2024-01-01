@@ -8,10 +8,13 @@ import (
 	"fmt"
 
 	"net/http"
+
+	"math"
 )
 
 var db *gorm.DB
-var err error
+
+// var err error -> need error handling
 
 type Number struct {
 	gorm.Model
@@ -21,19 +24,21 @@ type Number struct {
 
 func ConnectDb(POSTGRES_PASSWORD string) {
 	dsn := fmt.Sprintf(
-		"host=db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Shanghai",
-		"postgres",
+		"host=db user=postgres password=%s dbname=numbers port=5432 sslmode=disable",
 		POSTGRES_PASSWORD,
-		"numbers",
 	)
 	db, _ = gorm.Open(postgres.Open(dsn))
 }
 
 func CreateTable() {
-	db.AutoMigrate(&Number{})
+	if !db.Migrator().HasTable("numbers") {
+		fmt.Println("Creating numbers table and inserting values")
+		db.AutoMigrate(&Number{})
 
-	for i := 0; i <= 1000; i++ {
-		InsertNumber(i, i%2 == 1)
+		for i := 0; i < math.MaxInt16; i++ {
+			InsertNumber(i, i%2 == 1)
+		}
+		fmt.Println("Values are inserted and db is ready")
 	}
 }
 

@@ -11,7 +11,7 @@ import (
 func main() {
 	env := GetEnv()
 	ConnectDb(env["POSTGRES_PASSWORD"])
-	// CreateTable()
+	CreateTable()
 	r := gin.Default()
 
 	r.GET("/:number", func(c *gin.Context) {
